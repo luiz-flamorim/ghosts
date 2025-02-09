@@ -58,8 +58,6 @@ async function generateImage(record) {
 			`Generating image ${jsonData.indexOf(record) + 1} of ${jsonData.length}`
 		);
 
-		// Generate ID and set local image path
-		record.id = Math.floor(1000000000 + Math.random() * 9000000000);
 		const localImagePath = path.join(imgFolder, `${record.id}.png`);
 		record.img = localImagePath;
 
@@ -83,6 +81,9 @@ async function processImages() {
 		}
 	}
 
-	fs.writeFileSync("data/ghost-data-mini.json", JSON.stringify(jsonData, null, 2));
+	fs.writeFileSync(
+		"data/ghost-data-mini.json",
+		JSON.stringify(jsonData, null, 2)
+	);
 	console.log("Updated JSON file with image local paths!");
 }
