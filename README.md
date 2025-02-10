@@ -30,3 +30,6 @@ Store your API keys securely and never commit them to public repositories.
 - This project is for experimentation and learning purposes only.
 - Ensure you have API billing set up before running OpenAI or Google services.
 - Use a queueing mechanism if generating a large number of images, to avoid exceeding rate limits.
+
+## Blue Plaques dataset
+Blue plaques across the UK are commemorative signs installed on buildings to mark locations associated with historically significant people or events. Established in 1866 by the Royal Society of Arts and now managed by organisations like English Heritage, these plaques highlight sites where notable individuals lived, worked, or made significant contributions to society. The scheme primarily operates in London, but similar initiatives exist in other cities, celebrating figures from diverse fields such as literature, science, politics, and the arts. The [Open Blue Plaques] (https://openplaques.org/pages/data) compiled a free dataset ot them, free to use.
