@@ -1,5 +1,5 @@
 const fs = require("fs");
-let endPoint = "https://70c3-34-124-238-75.ngrok-free.app";
+let endPoint = "https://ghost.ngrok-free.app";
 let dataFile = "../data/ghost-data.json"
 
 // Read JSON Data
