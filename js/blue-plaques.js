@@ -1,6 +1,7 @@
 const fs = require("fs");
-let rawData = fs.readFileSync("../data/open-plaques-london-2023-11-10.json");
-let jsonData = JSON.parse(rawData);
+let londonData = fs.readFileSync("../data/open-plaques-london-2023-11-10.json");
+let ukData = fs.readFileSync("../data/open-plaques-United-Kingdom-2023-11-10.json");
+let jsonData = JSON.parse(ukData);
 
 let countIds = 0;
 let countImg = 0;
