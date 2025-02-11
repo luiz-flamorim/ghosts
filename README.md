@@ -1,10 +1,16 @@
 # Ghosts 👻
-This is an experiment for **educational purposes**. The code scrapes the data from [The Paranormal Database](https://www.paranormaldatabase.com/), and then adds trats the locations to add geolocation using the Google Geodata API.
+This project explores networked experiences and data collection by scraping and processing data from The Paranormal Database, a publicly available repository of haunted locations in the UK. Additionally, it incorporates the Blue Plaques dataset, which marks locations associated with historically significant individuals. By juxtaposing these datasets, the project creates an artistic commentary on delusion vs. reality—contrasting folklore-driven paranormal locations with documented historical landmarks.
 
 ### Disclaimer - Legal Stuff
 Accordingly to [The Paranormal Database Legal Stuff](https://www.paranormaldatabase.com/legal/index.html) page, *"You shall not copy, reproduce, republish, decompile, reverse engineer, scrape, download, post, broadcast, transmit, make available to the public, or otherwise use the content of this website in any form in any medium except for your own personal, non-commercial use. You shall not adapt, alter or generate a derivative work from any part of this website except for your own personal, non-commercial use."*
 
-This project is open for educational use only.
+I reiterate that this current project has educational purposes only.
+
+## The Paranormal Database
+[The Paranormal Database](https://www.paranormaldatabase.com) is an extensive and ongoing project that documents locations in the UK, Ireland, and the Channel Islands with connections to folklore, paranormal activity, and cryptozoology. It serves as an informational resource, compiling historical accounts, bibliographic references, and local stories to create a comprehensive repository of supernatural occurrences. The database acts as a contribution hub where users can explore narratives spanning centuries, offering insight into cultural mythologies and regional folklore.
+
+## Blue Plaques dataset
+Blue plaques across the UK are commemorative signs installed on buildings to mark locations associated with historically significant people or events. Established in 1866 by the Royal Society of Arts and now managed by organisations like English Heritage, these plaques highlight sites where notable individuals lived, worked, or made significant contributions to society. The scheme primarily operates in London, but similar initiatives exist in other cities, celebrating figures from diverse fields such as literature, science, politics, and the arts. The (Open Blue Plaques) [https://openplaques.org/pages/data] compiled a free dataset ot them, free to use.
 
 ## How it works
 the JS should run in sequence using node.js
@@ -18,6 +24,7 @@ the JS should run in sequence using node.js
         - Run the Colab notebook (in the Py/ folder).
         - Get the API address from the last cell of the notebook.
         - Update sf.js with the new API address and run it.
+- 05 - blue-plaques.js - Using the [Open Plaques](https://openplaques.org) dataset, this app downloads a local copy of the images which are linked in the dataset
 
 ## APIs
 You will need your own API keys to run this project.
@@ -30,6 +37,3 @@ Store your API keys securely and never commit them to public repositories.
 - This project is for experimentation and learning purposes only.
 - Ensure you have API billing set up before running OpenAI or Google services.
 - Use a queueing mechanism if generating a large number of images, to avoid exceeding rate limits.
-
-## Blue Plaques dataset
-Blue plaques across the UK are commemorative signs installed on buildings to mark locations associated with historically significant people or events. Established in 1866 by the Royal Society of Arts and now managed by organisations like English Heritage, these plaques highlight sites where notable individuals lived, worked, or made significant contributions to society. The scheme primarily operates in London, but similar initiatives exist in other cities, celebrating figures from diverse fields such as literature, science, politics, and the arts. The (Open Blue Plaques) [https://openplaques.org/pages/data] compiled a free dataset ot them, free to use.
