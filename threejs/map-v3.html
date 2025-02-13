@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ghost and Blue Plaques Data</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+</head>
+<body>
+    <script>
+        // Add constants at the top of your script
+        const MOVEMENT_CONSTANTS = {
+            FORWARD_SPEED: 0.1,
+            STRAFE_SPEED: 0.01,
+            VERTICAL_SPEED: 0.1,
+            GROUND_LEVEL: 1.7
+        };
+
+        // Set up scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create floor
+        const floorGeometry = new THREE.PlaneGeometry(100, 100); // 4x larger (25 * 4)
+        const floorMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x808080,  // gray color
+            side: THREE.DoubleSide
+        });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = Math.PI / 2;  // rotate to be horizontal
+        floor.position.y = -0.1;  // slightly below the points
+        scene.add(floor);
+
+        // Add grid helper
+        const gridHelper = new THREE.GridHelper(100, 100);
+        gridHelper.position.y = -0.09;  // slightly above the floor
+        scene.add(gridHelper);
+
+        // Position camera
+        camera.position.set(0, 1.7, 0); // Positioned at eye level
+        camera.lookAt(5, 1.7, 5); // Look slightly forward and to the right
+
+        // Remove OrbitControls and add PointerLockControls
+        const controls = new THREE.PointerLockControls(camera, document.body);
+
+        // Modify the movement state to use the constant
+        const moveState = {
+            forward: false,
+            backward: false,
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+            groundLevel: MOVEMENT_CONSTANTS.GROUND_LEVEL
+        };
+
+        // Add event listeners for pointer lock
+        document.addEventListener('click', () => {
+            controls.lock();
+        });
+
+        // Key controls
+        document.addEventListener('keydown', (event) => {
+            switch (event.code) {
+                case 'KeyW': moveState.forward = true; break;
+                case 'KeyS': moveState.backward = true; break;
+                case 'KeyA': moveState.left = true; break;
+                case 'KeyD': moveState.right = true; break;
+                case 'ArrowUp': moveState.up = true; break;
+                case 'ArrowDown': moveState.down = true; break;
+                case 'KeyF': // Toggle fog
+                    fogState.enabled = !fogState.enabled;
+                    scene.fog = fogState.enabled ? fogState.fog : null;
+                    console.log('Fog:', fogState.enabled ? 'On' : 'Off');
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            switch (event.code) {
+                case 'KeyW': moveState.forward = false; break;
+                case 'KeyS': moveState.backward = false; break;
+                case 'KeyA': moveState.left = false; break;
+                case 'KeyD': moveState.right = false; break;
+                case 'ArrowUp': moveState.up = false; break;
+                case 'ArrowDown': moveState.down = false; break;
+            }
+        });
+
+        // Update the movement function to use the constant
+        function updateMovement() {
+            if (!controls.isLocked) return;
+
+            const velocity = new THREE.Vector3();
+            const direction = new THREE.Vector3();
+
+            // Get camera's forward and right directions
+            direction.z = Number(moveState.forward) - Number(moveState.backward);
+            direction.x = Number(moveState.right) - Number(moveState.left);
+            direction.normalize();
+
+            // Apply movement based on camera direction with specific speeds
+            if (moveState.forward || moveState.backward) {
+                velocity.z -= direction.z * MOVEMENT_CONSTANTS.FORWARD_SPEED;
+            }
+            if (moveState.left || moveState.right) {
+                velocity.x += direction.x * MOVEMENT_CONSTANTS.STRAFE_SPEED;
+            }
+            
+            // Vertical movement
+            if (moveState.up) {
+                velocity.y += MOVEMENT_CONSTANTS.VERTICAL_SPEED;
+            }
+            if (moveState.down) {
+                if (camera.position.y > moveState.groundLevel) {
+                    velocity.y -= MOVEMENT_CONSTANTS.VERTICAL_SPEED;
+                    
+                    if (camera.position.y + velocity.y < moveState.groundLevel) {
+                        velocity.y = moveState.groundLevel - camera.position.y;
+                    }
+                }
+            }
+
+            // Move the camera
+            controls.moveRight(velocity.x);
+            controls.moveForward(-velocity.z);
+            camera.position.y += velocity.y;
+
+            // Log position when moving
+            if (moveState.forward || moveState.backward || moveState.left || moveState.right || 
+                moveState.up || moveState.down) {
+                console.log('Camera position:', {
+                    x: camera.position.x.toFixed(2),
+                    y: camera.position.y.toFixed(2),
+                    z: camera.position.z.toFixed(2)
+                });
+            }
+        }
+
+        // Modified animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            updateMovement();
+            renderer.render(scene, camera);
+        }
+
+        // Add instructions overlay
+        const instructions = document.createElement('div');
+        instructions.style.position = 'absolute';
+        instructions.style.top = '10px';
+        instructions.style.width = '100%';
+        instructions.style.textAlign = 'center';
+        instructions.style.color = '#ffffff';
+        instructions.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        instructions.style.padding = '10px';
+        instructions.innerHTML = 'Click to start<br>WASD = Move<br>Mouse = Look<br>Up Arrow = Rise<br>Down Arrow = Fall<br>F = Toggle Fog';
+        document.body.appendChild(instructions);
+
+        // Update instructions visibility based on pointer lock
+        controls.addEventListener('lock', () => instructions.style.display = 'none');
+        controls.addEventListener('unlock', () => instructions.style.display = 'block');
+
+        // Start animation
+        animate();
+
+        function calculateLatLongRanges(data) {
+            const ranges = {
+                lat: { min: Infinity, max: -Infinity },
+                long: { min: Infinity, max: -Infinity }
+            };
+
+            data.forEach(item => {
+                if (item.latitude && item.longitude) {
+                    ranges.lat.min = Math.min(ranges.lat.min, item.latitude);
+                    ranges.lat.max = Math.max(ranges.lat.max, item.latitude);
+                    ranges.long.min = Math.min(ranges.long.min, item.longitude);
+                    ranges.long.max = Math.max(ranges.long.max, item.longitude);
+                }
+            });
+
+            return ranges;
+        }
+
+        function createDotTexture(color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const context = canvas.getContext('2d');
+            
+            context.beginPath();
+            context.arc(16, 16, 8, 0, Math.PI * 2);
+            context.fillStyle = color;
+            context.fill();
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // Add this at the top of your script, after scene setup
+        const textureLoader = new THREE.TextureLoader();
+        const textures = {
+            ghost: null,
+            plaque: null
+        };
+
+        // Add preload function
+        function preloadTextures() {
+            return new Promise((resolve, reject) => {
+                let loadedCount = 0;
+                const totalTextures = 2;
+
+                function checkAllLoaded() {
+                    loadedCount++;
+                    if (loadedCount === totalTextures) {
+                        resolve();
+                    }
+                }
+
+                // Load ghost texture
+                textureLoader.load(
+                    './ghost-test1.jpeg',
+                    (texture) => {
+                        textures.ghost = texture;
+                        console.log('Ghost texture loaded');
+                        checkAllLoaded();
+                    },
+                    undefined, // Progress callback (optional)
+                    (error) => {
+                        console.error('Error loading ghost texture:', error);
+                        reject(error);
+                    }
+                );
+
+                // Load plaque texture
+                textureLoader.load(
+                    './ghost-test2.jpeg',
+                    (texture) => {
+                        textures.plaque = texture;
+                        console.log('Plaque texture loaded');
+                        checkAllLoaded();
+                    },
+                    undefined, // Progress callback (optional)
+                    (error) => {
+                        console.error('Error loading plaque texture:', error);
+                        reject(error);
+                    }
+                );
+            });
+        }
+
+        // Modify plotPoints to use preloaded textures
+        function plotPoints(data, ranges, color, height = 1.7, textureKey = null) {
+            data.forEach(item => {
+                if (item.latitude && item.longitude) {
+                    // Scale the x and z positions by 4
+                    const x = ((item.longitude - ranges.long.min) / (ranges.long.max - ranges.long.min) * 2 - 1) * 40; // 10 * 4
+                    const z = -(((item.latitude - ranges.lat.min) / (ranges.lat.max - ranges.lat.min) * 2 - 1) * 40);
+
+                    let material;
+                    if (textureKey && textures[textureKey]) {
+                        material = new THREE.SpriteMaterial({ 
+                            map: textures[textureKey],
+                            transparent: true
+                        });
+                    } else {
+                        const dotTexture = createDotTexture(color);
+                        material = new THREE.SpriteMaterial({
+                            map: dotTexture,
+                            transparent: true
+                        });
+                    }
+
+                    const sprite = new THREE.Sprite(material);
+                    sprite.position.set(x, height, z);
+                    sprite.scale.set(0.8, 0.8, 0.8); // Increased sprite size
+                    sprite.userData = item;
+                    scene.add(sprite);
+                }
+            });
+        }
+
+        function getOutliers(data) {
+            // Skip empty datasets
+            if (!data || data.length === 0) {
+                console.warn('No data provided to getOutliers function');
+                return [];
+            }
+
+            // Extract valid coordinates
+            const validData = data.filter(item => item.latitude && item.longitude);
+            const latitudes = validData.map(item => item.latitude);
+            const longitudes = validData.map(item => item.longitude);
+
+            // Helper function to calculate quartiles
+            function calculateQuartiles(values) {
+                const sorted = values.sort((a, b) => a - b);
+                return {
+                    q1: sorted[Math.floor(sorted.length * 0.25)],
+                    q3: sorted[Math.floor(sorted.length * 0.75)]
+                };
+            }
+
+            // Calculate bounds for latitude
+            const latQuartiles = calculateQuartiles(latitudes);
+            const latIQR = latQuartiles.q3 - latQuartiles.q1;
+            const latBounds = {
+                lower: latQuartiles.q1 - (1.5 * latIQR),
+                upper: latQuartiles.q3 + (1.5 * latIQR)
+            };
+
+            // Calculate bounds for longitude
+            const longQuartiles = calculateQuartiles(longitudes);
+            const longIQR = longQuartiles.q3 - longQuartiles.q1;
+            const longBounds = {
+                lower: longQuartiles.q1 - (1.5 * longIQR),
+                upper: longQuartiles.q3 + (1.5 * longIQR)
+            };
+
+            // Find outliers
+            const outliers = validData.filter(item => {
+                const isLatOutlier = item.latitude < latBounds.lower || item.latitude > latBounds.upper;
+                const isLongOutlier = item.longitude < longBounds.lower || item.longitude > longBounds.upper;
+                return isLatOutlier || isLongOutlier;
+            });
+
+            // Log statistics
+            console.log('Outlier Analysis:', {
+                totalPoints: data.length,
+                validPoints: validData.length,
+                outlierCount: outliers.length,
+                bounds: {
+                    latitude: latBounds,
+                    longitude: longBounds
+                }
+            });
+
+            return {
+                outliers: outliers,
+                bounds: {
+                    latitude: latBounds,
+                    longitude: longBounds
+                },
+                statistics: {
+                    total: data.length,
+                    valid: validData.length,
+                    outlierCount: outliers.length
+                }
+            };
+        }
+
+        // Modify loadAndPlotData to wait for texture loading
+        async function loadAndPlotData() {
+            try {
+                // First load textures
+                await preloadTextures();
+                console.log('All textures loaded successfully');
+
+                // Then load and plot data
+                const [ghostResponse, plaquesResponse] = await Promise.all([
+                    fetch('../data/ghost-data.json'),
+                    fetch('../data/open-plaques-United-Kingdom-2023-11-10.json')
+                ]);
+
+                const ghostData = await ghostResponse.json();
+                const plaquesData = await plaquesResponse.json();
+
+                const ghostOutliers = getOutliers(ghostData);
+                const plaqueOutliers = getOutliers(plaquesData);
+
+                const filteredGhostData = ghostData.filter(item => 
+                    !ghostOutliers.outliers.find(o => o === item)
+                );
+                const filteredPlaqueData = plaquesData.filter(item => 
+                    !plaqueOutliers.outliers.find(o => o === item)
+                );
+
+                const combinedData = [...filteredGhostData, ...filteredPlaqueData];
+                const ranges = calculateLatLongRanges(combinedData);
+
+                // Plot ghosts at eye level and plaques higher
+                plotPoints(filteredGhostData, ranges, 'red', 1.7, 'ghost');  // Ghost at eye level
+                plotPoints(filteredPlaqueData, ranges, 'blue', 2.5, 'plaque');  // Plaques above head
+
+            } catch (error) {
+                console.error('Error loading data or textures:', error);
+            }
+        }
+
+        // Handle window resizing
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        window.addEventListener('resize', onWindowResize, false);
+
+        // Start everything
+        loadAndPlotData();
+
+        // After scene creation, add fog
+        const fogState = {
+            enabled: true,
+            fog: new THREE.FogExp2(0x000000, 0.5) // Color and density parameter
+        };
+
+        // Apply initial fog
+        scene.fog = fogState.fog;
+        scene.background = new THREE.Color(0x000000);
+
+        // Optional: match background color to fog color for smooth transition
+        scene.background = new THREE.Color(0x000000);
+    </script>
+</body>
+</html>
+
