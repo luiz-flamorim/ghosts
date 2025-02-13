@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Three.js Image Plane</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Add OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // Set up scene, camera, and renderer
+        // load the dataset
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a texture loader
+        const textureLoader = new THREE.TextureLoader();
+
+        // Load your image as a texture
+        // Replace 'path/to/your/image.jpg' with your actual image path
+        const texture = textureLoader.load('blue-palque-needs-credit.png');
+
+        // Create a plane geometry
+        // Parameters: width, height
+        const geometry = new THREE.PlaneGeometry(2, 2);
+
+        // Create a material with the texture
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.DoubleSide // Makes the plane visible from both sides
+        });
+
+        // Create the mesh by combining geometry and material
+        const plane = new THREE.Mesh(geometry, material);
+
+        // Set position
+        plane.position.x = 0;  // left/right
+        plane.position.y = 4;  // up/down
+        plane.position.z = 0;  // forward/backward
+
+        // You can also rotate the plane if needed
+        plane.rotation.x = 0;  // rotate around X axis
+        plane.rotation.y = 0;  // rotate around Y axis
+        plane.rotation.z = 0;  // rotate around Z axis
+
+        // Add the plane to the scene
+        scene.add(plane);
+
+        // Create floor
+        const floorGeometry = new THREE.PlaneGeometry(20, 20); // width and height of floor
+        const floorMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x808080,  // gray color
+            side: THREE.DoubleSide
+        });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        
+        // Rotate and position the floor
+        floor.rotation.x = Math.PI / 2;  // rotate to be horizontal
+        floor.position.y = -2;  // move it below the image plane
+        
+        scene.add(floor);
+
+        // Add a grid helper (existing code)
+        const size = 10;
+        const divisions = 10;
+        const gridHelper = new THREE.GridHelper(size, divisions);
+        gridHelper.position.y = -2;  // match floor position
+        scene.add(gridHelper);
+
+        // Position the camera
+        camera.position.z = 5;
+
+        // Add OrbitControls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Add smooth damping
+        controls.dampingFactor = 0.05;
+
+        // Keyboard controls setup
+        const keyState = {};
+        const moveSpeed = 0.1;
+
+        document.addEventListener('keydown', (event) => {
+            keyState[event.code] = true;
+        });
+
+        document.addEventListener('keyup', (event) => {
+            keyState[event.code] = false;
+        });
+
+        // Update camera position based on keyboard input
+        function updateCamera() {
+            if (keyState['KeyW']) camera.position.z -= moveSpeed;
+            if (keyState['KeyS']) camera.position.z += moveSpeed;
+            if (keyState['KeyA']) camera.position.x -= moveSpeed;
+            if (keyState['KeyD']) camera.position.x += moveSpeed;
+            if (keyState['KeyQ']) camera.position.y += moveSpeed;
+            if (keyState['KeyE']) camera.position.y -= moveSpeed;
+        }
+
+        // Modify the animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Update controls
+            controls.update();
+            
+            // Update camera position
+            updateCamera();
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resizing
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        animate();
+
+        // Using fetch (Browser/Modern JS)
+        async function loadGhostData() {
+            try {
+                const response = await fetch('./data/ghost-data.json');
+                const ghostData = await response.json();
+                
+                // Create a canvas texture for the red dot
+                const canvas = document.createElement('canvas');
+                canvas.width = 32;
+                canvas.height = 32;
+                const context = canvas.getContext('2d');
+                
+                // Draw a red circle
+                context.beginPath();
+                context.arc(16, 16, 8, 0, Math.PI * 2);
+                context.fillStyle = 'red';
+                context.fill();
+                
+                // Create texture from canvas
+                const dotTexture = new THREE.CanvasTexture(canvas);
+                
+                // Define our world scale
+                const WORLD_SCALE = 100;
+                const LAT_RANGE = 180;
+                const LON_RANGE = 360;
+
+                ghostData.ghosts.forEach(ghost => {
+                    const x = (ghost.longitude / (LON_RANGE/2)) * WORLD_SCALE;
+                    const z = (ghost.latitude / (LAT_RANGE/2)) * WORLD_SCALE;
+                    const y = 0;
+
+                    const spriteMaterial = new THREE.SpriteMaterial({ 
+                        map: dotTexture,
+                        sizeAttenuation: true,
+                        transparent: true
+                    });
+
+                    const sprite = new THREE.Sprite(spriteMaterial);
+                    sprite.position.set(x, y, z);
+                    
+                    // Make the dot smaller (adjust scale as needed)
+                    sprite.scale.set(2, 2, 1);
+
+                    scene.add(sprite);
+                    sprite.userData = ghost;
+                });
+
+            } catch (error) {
+                console.error('Error loading ghost data:', error);
+            }
+        }
+
+        loadGhostData();
+    </script>
+</body>
+</html> 
