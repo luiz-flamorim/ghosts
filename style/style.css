@@ -1,0 +1,45 @@
+* {
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	overflow: hidden;
+}
+
+#map {
+	width: 100vw;
+	height: 100vh;
+}
+
+#tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid black;
+    padding:2rem;
+    border-radius: 1rem;
+    visibility: hidden;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.ghost-points{
+    opacity: 0.5;
+    fill: blue;
+    cursor: pointer;
+}
+
+.user-location{
+    fill: red;
+    opacity: 0.5;
+    stroke: solid 1px red;
+    cursor: pointer;
+
+}
+
+.nearby-ghost{
+    fill: aqua;
+    opacity: 0.7;
+}

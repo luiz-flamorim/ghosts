@@ -41,7 +41,7 @@ async function generateImage(prompt, id) {
 				prompt: prompt,
 				width: 500,
 				height: 500,
-				steps: 175,
+				steps: 300,
 				cfg_scale: 7.5,
 				sampler: "dpm2", // Different sampling methods: k_euler, ddim, dpm2, k_euler_a etc.
 				seed: 42,
