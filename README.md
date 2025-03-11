@@ -10,7 +10,7 @@ I reiterate that this current project has **educational purposes only**.
 [The Paranormal Database](https://www.paranormaldatabase.com) is an extensive and ongoing project that documents locations in the UK, Ireland, and the Channel Islands with connections to folklore, paranormal activity, and cryptozoology. It serves as an informational resource, compiling historical accounts, bibliographic references, and local stories to create a comprehensive repository of supernatural occurrences. The database acts as a contribution hub where users can explore narratives spanning centuries, offering insight into cultural mythologies and regional folklore.
 
 ## Blue Plaques dataset
-Blue plaques across the UK are commemorative signs installed on buildings to mark locations associated with historically significant people or events. Established in 1866 by the Royal Society of Arts and now managed by organisations like English Heritage, these plaques highlight sites where notable individuals lived, worked, or made significant contributions to society. The scheme primarily operates in London, but similar initiatives exist in other cities, celebrating figures from diverse fields such as literature, science, politics, and the arts. The (Open Blue Plaques) [https://openplaques.org/pages/data] compiled a free dataset ot them, free to use.
+Blue plaques across the UK are commemorative signs installed on buildings to mark locations associated with historically significant people or events. Established in 1866 by the Royal Society of Arts and now managed by organisations like English Heritage, these plaques highlight sites where notable individuals lived, worked, or made significant contributions to society. The scheme primarily operates in London, but similar initiatives exist in other cities, celebrating figures from diverse fields such as literature, science, politics, and the arts. The [Open Plaques](https://openplaques.org/pages/data) compiled a free dataset ot them, free to use.
 
 ## Development and file structure
 
@@ -37,7 +37,7 @@ This was the first attempt to visualise the data, and add an artistic layer. It 
 The app uses Three.js, and the navigation is made using the WASD + mouse.
 
 ### 04-datavis
-As a legacy, or perhaps a layer of understanding the data, and test it in the city, There is a dataVis using D3.js. Each ghost is plotted on the map, which also consider the user geolocation, highlighting the ghosts 2km nearby the user. the user can also scroll on the the listed of ghotst, or just nagivate through the map. Once the user clicks on the circles, it will show up some information, including the generated images.
+As a legacy, or perhaps a layer of understanding the data and test it in the city, I've made a dataVis using D3.js. Each ghost is plotted on the map, which also consider the user geolocation, highlighting the ghosts 2km nearby the user. the user can also scroll on the list of ghosts, or just navigate through the map. Once the user clicks on the circles, it will show up some information, including the generated images.
 
 One addition to this is the **Haversine Formula**, used to calculate the great-circle distance (the shortest distance) between two points on a sphere, given their latitude and longitude.
 ```
