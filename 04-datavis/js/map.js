@@ -4,11 +4,13 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 	attribution: `&copy; <a href='https://carto.com/'>CARTO</a>`,
 }).addTo(map);
 
+// ---------------- Global Variables ---------------- //
+
 const svgLayer = d3.select(map.getPanes().overlayPane).append("svg");
 const mapGroup = svgLayer.append("g").attr("class", "leaflet-overlay");
 let currentRadius;
 let userPoint;
-let ghostData = null; // store ghost sightings globally
+let ghostData = null;
 
 // ---------------- Data Loading & Geolocation ---------------- //
 d3.json("../data/ghost-data.json")
@@ -40,25 +42,51 @@ function getUserLocation(sightings) {
 	);
 }
 
+// ---------------- Image Fallback ---------------- //
+// to use the img-subset if the img folder is not available
+
+function getRandomFallback() {
+	const fallbackImages = [
+		"1267665006.png",
+		"1267930102.png",
+		"1270251641.png",
+		"1273123717.png",
+		"1273186761.png",
+		"1274425864.png",
+		"1275413521.png",
+		"1275968378.png",
+		"1277051560.png",
+		"1277692988.png"
+	  ]
+	const index = Math.floor(Math.random() * fallbackImages.length);
+	return fallbackImages[index];
+  }
+
 // ---------------- Tooltip Functions ---------------- //
 function showTooltip(ghost) {
+	// Use the ghost id image from the primary folder
 	const imgPath = `../img/${ghost.id}.png`;
+  
+	// Build the modal content.
 	const contentHTML = `
-    <div id="tooltip-content" onclick="event.stopPropagation()">
-      <h2 class="ghost-title-2">${ghost.title}</h2>
-      <img src="${imgPath}" alt="${ghost.title}" class="ghost-img">
-      <div class="date-location-container">
-        <p class="ghost-date"><strong>Date:</strong> ${ghost.date}</p>
-        <p class="ghost-location"><strong>Location:</strong> ${ghost.location}</p>
-      </div>
-      <p class="ghost-info">${ghost.info}</p>
-    </div>
-  `;
+	  <div id="tooltip-content" onclick="event.stopPropagation()">
+		<h2 class="ghost-title-2">${ghost.title}</h2>
+		<img src="${imgPath}" alt="${ghost.title}" class="ghost-img"
+			 onerror="this.onerror=null; this.src='../img-subset/' + getRandomFallback();">
+		<div class="date-location-container">
+		  <p class="ghost-date"><strong>Date:</strong> ${ghost.date}</p>
+		  <p class="ghost-location"><strong>Location:</strong> ${ghost.location}</p>
+		</div>
+		<p class="ghost-info">${ghost.info}</p>
+	  </div>
+	`;
+  
 	d3.select("#tooltip")
-		.html(contentHTML)
-		.style("display", "block")
-		.style("visibility", "visible");
-}
+	  .html(contentHTML)
+	  .style("display", "block")
+	  .style("visibility", "visible");
+  }
+  
 
 function hideTooltip() {
 	d3.select("#tooltip")
@@ -73,14 +101,14 @@ document.addEventListener("click", hideTooltip);
 
 // ---------------- Helper Functions ---------------- //
 
-// Convert (lon, lat) into pixel coordinates relative to the map.
 function projectPoint(lon, lat) {
+  // Convert (lon, lat) into pixel coordinates relative to the map.
 	const point = map.latLngToLayerPoint(new L.LatLng(lat, lon));
 	return [point.x, point.y];
 }
 
-// Create or update the user point on the map.
 function plotUserLocation(lat, lng) {
+  // Create or update the user point on the map.
 	const coords = projectPoint(lng, lat);
 	if (!userPoint) {
 		userPoint = mapGroup.append("circle").attr("class", "user-location");
@@ -90,9 +118,7 @@ function plotUserLocation(lat, lng) {
 
 // Updates the user location, centers the map, and refreshes ghost highlights and list.
 function updateUserLocationAndHighlights(userLat, userLng, sightings) {
-	// First update the map view.
 	map.setView([userLat, userLng], 13);
-	// When the move is complete, update the user point and refresh ghost highlights.
 	map.once("moveend", function () {
 		plotUserLocation(userLat, userLng);
 		d3.selectAll(".ghost-points").classed("nearby-ghost", false);
@@ -214,8 +240,9 @@ function reset() {
 }
 
 // ---------------- Distance Calculation & Highlighting ---------------- //
+// Haversine Formula
 function getDistance(lat1, lon1, lat2, lon2) {
-	const R = 6371;
+	const R = 6371; //Earth Radius
 	const toRad = (deg) => deg * (Math.PI / 180);
 	const dLat = toRad(lat2 - lat1);
 	const dLon = toRad(lon2 - lon1);

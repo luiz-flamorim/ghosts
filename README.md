@@ -39,6 +39,12 @@ The app uses Three.js, and the navigation is made using the WASD + mouse.
 ### 04-datavis
 As a legacy, or perhaps a layer of understanding the data, and test it in the city, There is a dataVis using D3.js. Each ghost is plotted on the map, which also consider the user geolocation, highlighting the ghosts 2km nearby the user. the user can also scroll on the the listed of ghotst, or just nagivate through the map. Once the user clicks on the circles, it will show up some information, including the generated images.
 
+One addition to this is the **Haversine Formula**, used to calculate the great-circle distance (the shortest distance) between two points on a sphere, given their latitude and longitude.
+```
+a = sin²(Δlat/2) + cos(lat1) × cos(lat2) × sin²(Δlon/2)
+c = 2 × atan2(√a, √(1−a))
+```
+
 ## APIs
 You will need your own API keys to run this project.
 - Google Geodata API – Used for geolocation data (lat-lng.js).

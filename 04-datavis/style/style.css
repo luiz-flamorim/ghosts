@@ -10,8 +10,8 @@
 	--colour01: rgb(255, 0, 0);
 }
 
-/* scroll bar */
 * {
+	/* scroll bar */
 	scrollbar-width: thin; /* options: auto, thin, none */
 	scrollbar-color: black transparent; /* thumb and track colors */
 }
@@ -30,10 +30,34 @@
 	border-radius: 5px;
 }
 
+a {
+	color: white; /* White text */
+	text-decoration: none;
+	transition: color 0.3s ease-in-out; /* Smooth color transition */
+}
+
+/* Hover effect */
+a:hover {
+	color: red; /* Change color on hover */
+	text-decoration: underline; /* Underline on hover */
+}
+
+/* Visited links */
+a:visited {
+	color: darkred;}
+
+/* Active link (when clicked) */
+a:active {
+	color: darkred;
+}
+
 body {
 	background-color: rgb(9, 9, 9);
 	color: #fff;
 	font-size: 1.4rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 section {
 	display: flex;
@@ -49,10 +73,14 @@ section {
 h1 {
 	font-weight: 500;
 	font-size: 4rem;
+	text-align: center;
+	margin-bottom: 3rem;
 }
 p {
 	font-weight: 200;
+	margin-bottom: 1rem;
 }
+
 #map-container {
 	position: relative;
 	width: 100%;
@@ -135,7 +163,13 @@ p {
 }
 
 #close {
-	height: 10vh;
+	margin-top: 4rem;
+	margin-bottom: 10rem;
+	scroll-margin-bottom: 4rem;
+	font-size: 01rem;
+	padding-left: 20%;
+	padding-right: 20%;
+	text-align: center;
 }
 
 #form {
