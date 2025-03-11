@@ -1,0 +1,248 @@
+* {
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	margin: 0;
+	padding: 0;
+	font-family: "Grenze", serif;
+}
+
+:root {
+	--colour01: rgb(255, 0, 0);
+}
+
+/* scroll bar */
+* {
+	scrollbar-width: thin; /* options: auto, thin, none */
+	scrollbar-color: black transparent; /* thumb and track colors */
+}
+
+/* Webkit-based browsers (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+	background: black;
+	border: 1px solid white;
+	border-radius: 5px;
+}
+
+body {
+	background-color: rgb(9, 9, 9);
+	color: #fff;
+	font-size: 1.4rem;
+}
+section {
+	display: flex;
+	flex-direction: column;
+	padding-left: 10%;
+	padding-right: 10%;
+}
+.header {
+	margin-top: 10rem;
+	margin-bottom: 3rem;
+}
+
+h1 {
+	font-weight: 500;
+	font-size: 4rem;
+}
+p {
+	font-weight: 200;
+}
+#map-container {
+	position: relative;
+	width: 100%;
+	height: 70vh;
+	overflow: hidden;
+}
+
+#map {
+	min-width: 100%;
+	min-height: 100%;
+	cursor: grab;
+}
+#map:active,
+.uk-map:active {
+	cursor: grabbing;
+}
+
+.ghost-points {
+	fill: rgb(255, 255, 255);
+	cursor: pointer;
+}
+.nearby-ghost {
+	fill: var(--colour01);
+}
+
+.user-location {
+	fill: none;
+	stroke: var(--colour01);
+	stroke-width: 2;
+	animation: pulse 1s infinite ease-in;
+}
+@keyframes pulse {
+	0% {
+		r: 0;
+		opacity: 0.7;
+	}
+
+	100% {
+		r: 40px;
+		opacity: 0;
+	}
+}
+
+#ghost-list {
+	position: absolute;
+	top: 0;
+	right: 10%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 3rem;
+	width: 20%;
+	height: 100%;
+	max-height: inherit;
+	z-index: 1000;
+	overflow-y: scroll;
+	padding-right: 1rem;
+	pointer-events: auto;
+	cursor: pointer;
+}
+/* scrolls */
+#ghost-list {
+	scrollbar-width: thin;
+	scrollbar-color: black;
+}
+
+.ghost-row {
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 0.8rem;
+	margin-bottom: 1rem;
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px);
+	transition: background-color 0.3s ease;
+}
+.ghost-row:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+#close {
+	height: 10vh;
+}
+
+#form {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 60%;
+	margin: 0 auto;
+	gap: 1rem;
+	margin-bottom: 3rem;
+}
+
+#location-input,
+#confirm-btn {
+	/* Reset default button styling */
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background: transparent;
+	border: none;
+	outline: none;
+	text-decoration: none;
+
+	/* styling */
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	flex: 1;
+	padding: 0 1rem;
+	border-radius: 2rem;
+	background-color: transparent;
+	color: white;
+	font-size: 1.3rem;
+	font-weight: 100;
+	text-align: center;
+	transition: background-color 0.3s ease;
+}
+
+#confirm-btn {
+	flex: 1;
+	background-color: rgba(255, 255, 255, 0.1);
+	color: white;
+	cursor: pointer;
+}
+
+#confirm-btn:hover {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal overlay for tooltip */
+#tooltip {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5); /* semi-transparent dark background */
+	backdrop-filter: blur(5px);
+	display: none; /* hidden by default */
+	z-index: 3000;
+}
+
+/* Content box centered in the modal */
+#tooltip-content {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	top: 50%;
+	left: 50%;
+	width: 60%;
+	height: 75%;
+	transform: translate(-50%, -50%);
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 2rem;
+	border-radius: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: white;
+	overflow-y: auto;
+}
+
+.ghost-title {
+	font-size: 0.8rem;
+	color: var(--colour01);
+}
+.ghost-title-2 {
+	font-size: 0.8;
+	color: var(--colour01);
+	text-align: center;
+	font-weight: 300;
+}
+.date-location-container {
+	display: flex;
+	gap: 3rem;
+	width: 100%;
+	justify-content: center;
+}
+.ghost-location {
+	font-size: 0.9rem;
+}
+.ghost-date {
+	font-size: 0.9rem;
+}
+.ghost-info {
+	margin-top: 1rem;
+	font-size: 1.2rem;
+}
+.ghost-img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 0.5rem;
+	margin-bottom: 1rem;
+}

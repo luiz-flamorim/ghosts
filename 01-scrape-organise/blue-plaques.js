@@ -1,3 +1,5 @@
+// Using the [Open Plaques](https://openplaques.org) dataset, this app downloads a local copy of the images which are linked in the dataset
+
 const fs = require("fs");
 const path = require("path");
 const puppeteer = require("puppeteer");

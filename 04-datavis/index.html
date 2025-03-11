@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>D3 UK Paranormal Map</title>
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+		<link rel="stylesheet" href="../04-datavis/style/style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Grenze:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+			rel="stylesheet" />
+
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+		<script src="https://d3js.org/d3.v7.min.js"></script>
+	</head>
+	<body>
+		<section class="header">
+			<h1>Mapping the Unseen</h1>
+			<p>
+				Mapped the Unseen is a visualisation that plots reported ghost sightings
+				based on historical records, eyewitness accounts, and documented
+				investigations, based on the data extracted from
+				<a href="https://www.paranormaldatabase.com">The Paranormal Database</a
+				>. The site allows users to explore haunted locations near them,
+				offering a self-guided way to navigate the eerie history of their
+				surroundings. By making this data accessible and interactive, Mapped the
+				Unseen transforms ghost stories into a mapped experience, bridging
+				folklore and location-based discovery.
+			</p>
+		</section>
+
+		<section id="form">
+			<input id="location-input" type="text" id="location" placeholder="Add a postcode and city">
+			<button id="confirm-btn">Confirm</button>
+		</section>
+
+		<div id="tooltip"></div>
+		<section id="map-container">
+			<div id="ghost-list"></div>
+			<div id="map"></div>
+		</section>
+
+		<section id="close">
+
+		</section>
+
+
+		<script src="../04-datavis/js/map.js"></script>
+	</body>
+</html>
